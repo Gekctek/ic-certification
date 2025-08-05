@@ -14,8 +14,7 @@ import Iter "mo:base/Iter";
 import Blob "mo:base/Blob";
 import Debug "mo:base/Debug";
 import Text "mo:base/Text";
-import CV "mo:cbor/Value";
-import CBOR "mo:cbor/Encoder";
+import CBOR "mo:cbor";
 import Nat64 "mo:base/Nat64";
 import Array "mo:base/Array";
 import Nat8 "mo:base/Nat8";
@@ -41,20 +40,20 @@ module {
 
   /// CBOR-encode the value (including the CBOR self-describing tag)
   public func encodeCBOR(r : R) : Blob {
-    let v : CV.Value = #majorType6{ tag = 55799; value = fromR(r) };
-    
-    switch (CBOR.encode(v)) {
-      case (#ok(a)) { Blob.fromArray(a)};
+    let v : CBOR.Value = #majorType6 { tag = 55799; value = fromR(r) };
+
+    switch (CBOR.toBytes(v)) {
+      case (#ok(a)) { Blob.fromArray(a) };
       case (#err(e)) { Debug.trap(debug_show e) };
     };
   };
 
-  func fromR(r : R) : CV.Value {
-    #majorType5(Array.map<(Text,V),(CV.Value,CV.Value)>(r,
+  func fromR(r : R) : CBOR.Value {
+    #majorType5(Array.map<(Text,V),(CBOR.Value,CBOR.Value)>(r,
       func ((k, v))  { (fromV(#string k), fromV(v)) }
     ))
   };
-  func fromV(v : V) : CV.Value {
+  func fromV(v : V) : CBOR.Value {
     switch (v) {
       case (#blob(b))   { #majorType2(Blob.toArray(b)) };
       case (#string(t)) { #majorType3(t) };
