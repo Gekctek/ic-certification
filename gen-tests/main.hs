@@ -96,7 +96,7 @@ propSHA256 = property $ do
     annotate src -- Generated sourced
     evalIO $ writeFile "../tmp.mo" src
     runCommand "cd .. && $(mops toolchain bin moc) $(mops sources) -no-check-ir -wasi-system-api tmp.mo"
-    runCommand "cd .. && wasmtime tmp.wasm"
+    runCommand "cd .. && $(mops toolchain bin wasmtime) tmp.wasm"
   where
     test_src b e = unlines
       [ "import Debug \"mo:base/Debug\";"
@@ -134,7 +134,7 @@ propPruned = property $ do
   -- annotate src -- Generated sourced
   evalIO $ writeFile "../tmp.mo" src
   runCommand "cd .. && $(mops toolchain bin moc) $(mops sources) -no-check-ir -wasi-system-api tmp.mo"
-  runCommand "cd .. && wasmtime tmp.wasm"
+  runCommand "cd .. && $(mops toolchain bin wasmtime) tmp.wasm"
 
 propDelete = property $ do
   ls :: [Label] <- forAll $ nub <$> list (linear 1 10) lbytes
@@ -156,7 +156,7 @@ propDelete = property $ do
   -- annotate src -- Generated sourced
   evalIO $ writeFile "../tmp.mo" src
   runCommand "cd .. && $(mops toolchain bin moc) $(mops sources) -no-check-ir -wasi-system-api tmp.mo"
-  runCommand "cd .. && wasmtime tmp.wasm"
+  runCommand "cd .. && $(mops toolchain bin wasmtime) tmp.wasm"
 
 
 conflicts :: Path -> Path -> Bool

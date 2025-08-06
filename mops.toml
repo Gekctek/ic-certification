@@ -14,4 +14,4 @@ test = "2.1.1"
 
 [toolchain]
 moc = "0.15.1"
-mo-doc = "0.15.1"
+wasmtime = "35.0.0"

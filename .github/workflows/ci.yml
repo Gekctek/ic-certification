@@ -27,7 +27,7 @@ jobs:
                       ~/.cabal/store
                   key: cabal-${{ runner.os }}-${{ hashFiles('gen-tests/*.cabal', 'gen-tests/cabal.project.freeze') }}
                   restore-keys: cabal-${{ runner.os }}-
-            - uses: haskell/actions/setup@v2
+            - uses: haskell-actions/setup@v2
               with:
                   ghc-version: 9.2.8
                   cabal-version: "3.8"
