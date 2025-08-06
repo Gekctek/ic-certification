@@ -17,14 +17,6 @@
         overlays = [ (import dfinity-sdk) ];
       };
 
-      vessel-src = pkgs.fetchFromGitHub {
-        owner = "dfinity";
-        repo = "vessel";
-        rev = "v0.7.0";
-        hash = "sha256-pQcC5RDnZOQGXdrcZolTprMEryBwbi58GqGYb61rGZQ=";
-      };
-      vessel = (import vessel-src { inherit system; }).vessel;
-
       # Generated with:
       # cd mops.nix/; nix run nixpkgs#node2nix -- -i <( echo '["ic-mops"]' ) -18
       mops = (import ./mops.nix { inherit system pkgs; }).ic-mops;
@@ -38,18 +30,15 @@
     {
       packages.x86_64-linux.dfx = dfx;
       packages.x86_64-linux.mops = mops;
-      packages.x86_64-linux.vessel = vessel;
       devShell.x86_64-linux = pkgs.mkShell {
         buildInputs = [
           pkgs.wasmtime
-          vessel
           (pkgs.ghc.withPackages(p: with p;
             [ cryptonite text tasty tasty-hedgehog containers
               memory typed-process quickcheck-instances
             ]))
           pkgs.ghcid
           dfx
-          pkgs.dhall
           pkgs.nodejs
           mops
         ];

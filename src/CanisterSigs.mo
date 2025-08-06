@@ -16,7 +16,6 @@ import CertTree "CertTree";
 import Time "mo:base/Time";
 import Deque "mo:base/Deque";
 import CertifiedData "mo:base/CertifiedData";
-import Error "mo:base/Error";
 import SHA256 "mo:sha2/Sha256";
 import Debug "mo:base/Debug";
 import List "mo:base/List";
@@ -39,7 +38,7 @@ module {
 
   /// Derive a self-authenticating principal from a public key
   public func selfAuthenticatingPrincipal(publicKey : PublicKey) : Principal {
-    let buf = Buffer.Buffer<Nat8>(28+1);
+    let buf = Buffer.Buffer<Nat8>(28 + 1);
     bufferAppend(buf, SHA256.fromBlob(#sha224, publicKey));
     buf.add(0x02);
     Principal.fromBlob(Blob.fromArray(Buffer.toArray(buf)));
@@ -49,7 +48,7 @@ module {
     let canister_sig_oid_seq : Blob = "\30\0c\06\0a\2b\06\01\04\01\83\b8\43\01\02";
     let buf = Buffer.Buffer<Nat8>(0);
     buf.add(0x30); // SEQUENCE
-    buf.add(Nat8.fromNat(canister_sig_oid_seq.size() + 3 + raw_key.size())); // overall length  
+    buf.add(Nat8.fromNat(canister_sig_oid_seq.size() + 3 + raw_key.size())); // overall length
     bufferAppend(buf, canister_sig_oid_seq);
     buf.add(0x03); // BIT String
     buf.add(Nat8.fromNat(1 + raw_key.size())); // key size
@@ -82,18 +81,18 @@ module {
   public func signature(cert : Blob, witness : MerkleTree.Witness) : Signature {
     ReqData.encodeCBOR([
       ("certificate", #blob(cert)),
-      ("tree", repOfWitness(witness))
-    ])
-  } ;
+      ("tree", repOfWitness(witness)),
+    ]);
+  };
 
   func repOfWitness(w : MerkleTree.Witness) : ReqData.V {
-    switch(w) {
-      case (#empty)        { #array([#nat(0)]) };
-      case (#fork(l,r))    { #array([#nat(1), repOfWitness(l), repOfWitness(r)]) };
-      case (#labeled(k,w)) { #array([#nat(2), #blob(k), repOfWitness(w)])};
-      case (#leaf(v))      { #array([#nat(3), #blob(v)])};
-      case (#pruned(h))    { #array([#nat(4), #blob(h)])};
-    }
+    switch (w) {
+      case (#empty) { #array([#nat(0)]) };
+      case (#fork(l, r)) { #array([#nat(1), repOfWitness(l), repOfWitness(r)]) };
+      case (#labeled(k, w)) { #array([#nat(2), #blob(k), repOfWitness(w)]) };
+      case (#leaf(v)) { #array([#nat(3), #blob(v)]) };
+      case (#pruned(h)) { #array([#nat(4), #blob(h)]) };
+    };
   };
 
   /// The canister signature manager class provides a bit of convenience for keeping track of the
@@ -103,7 +102,7 @@ module {
   /// ```
   /// stable let cert_store : CertTree.Store = CertTree.newStore();
   /// let ct = CertTree.Ops(cert_store);
-  /// let csm = CanisterSigs.Manager(ct, null); 
+  /// let csm = CanisterSigs.Manager(ct, null);
   /// ```
   /// Then in the update call, call `prepare`, and in the query call call `fetch`.
   ///
@@ -149,7 +148,9 @@ module {
       let path : CertTree.Path = ["sig", h seed, plh];
       let cert = switch (CertifiedData.getCertificate()) {
         case (?c) c;
-        case null { Debug.trap("No certificate available. Is this a query call?"); };
+        case null {
+          Debug.trap("No certificate available. Is this a query call?");
+        };
       };
       let witness = ct.reveal(path);
       signature(cert, witness);
@@ -164,19 +165,18 @@ module {
         switch (Deque.popFront(queue)) {
           case null { return };
           case (?(h, q2)) {
-            let (expiry, seed, plh) = h;
+            let (expiry, _, _) = h;
             if (expiry < now) {
               // expired
               queue := q2;
             } else {
               // not expird
               return;
-            }
-          }
-        }
+            };
+          };
+        };
       };
     };
-
 
     /// Drops all signatures. Useful in the pre_upgrade hook, to keep things tidy
     /// else signatures may lurk there forever, if the CanisterSigManager forgets about them.
@@ -193,7 +193,7 @@ module {
 
   // Hash-related functions
   func h(b : Blob) : Blob {
-      SHA256.fromBlob(#sha256, b)
+    SHA256.fromBlob(#sha256, b);
   };
 
-}
+};
