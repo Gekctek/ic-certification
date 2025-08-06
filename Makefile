@@ -1,4 +1,4 @@
-.PHONY: check docs test
+.PHONY: check docs test check-strict
 
 check:
 	find src -type f -name '*.mo' -print0 | xargs -0 $(shell mops toolchain bin moc) $(shell mops sources) --check
