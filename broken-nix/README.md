@@ -1,0 +1,1 @@
+Nix configs are currently broken due to out of date versions and other misc issues

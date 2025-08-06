@@ -21,8 +21,6 @@ Using [MOPS](https://mops.one/ic-certification):
 
     mops add ic-certification
 
-or using [vessel](https://github.com/dfinity/vessel).
-
 See `Developemnt.md` for development and testing information.
 
 ## License
