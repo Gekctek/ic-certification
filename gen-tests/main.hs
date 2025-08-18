@@ -95,8 +95,8 @@ propSHA256 = property $ do
     let src = test_src blob (h blob)
     annotate src -- Generated sourced
     evalIO $ writeFile "../tmp.mo" src
-    runCommand "cd .. && $(vessel bin)/moc $(mops sources) -no-check-ir -wasi-system-api tmp.mo"
-    runCommand "cd .. && wasmtime tmp.wasm"
+    runCommand "cd .. && $(mops toolchain bin moc) $(mops sources) -no-check-ir -wasi-system-api tmp.mo"
+    runCommand "cd .. && $(mops toolchain bin wasmtime) tmp.wasm"
   where
     test_src b e = unlines
       [ "import Debug \"mo:base/Debug\";"
@@ -133,8 +133,8 @@ propPruned = property $ do
   let src = moSrc pairs reveal witness
   -- annotate src -- Generated sourced
   evalIO $ writeFile "../tmp.mo" src
-  runCommand "cd .. && $(vessel bin)/moc $(mops sources) -no-check-ir -wasi-system-api tmp.mo"
-  runCommand "cd .. && wasmtime tmp.wasm"
+  runCommand "cd .. && $(mops toolchain bin moc) $(mops sources) -no-check-ir -wasi-system-api tmp.mo"
+  runCommand "cd .. && $(mops toolchain bin wasmtime) tmp.wasm"
 
 propDelete = property $ do
   ls :: [Label] <- forAll $ nub <$> list (linear 1 10) lbytes
@@ -155,8 +155,8 @@ propDelete = property $ do
   let src = moSrcDel pairs dps pairs2
   -- annotate src -- Generated sourced
   evalIO $ writeFile "../tmp.mo" src
-  runCommand "cd .. && $(vessel bin)/moc $(mops sources) -no-check-ir -wasi-system-api tmp.mo"
-  runCommand "cd .. && wasmtime tmp.wasm"
+  runCommand "cd .. && $(mops toolchain bin moc) $(mops sources) -no-check-ir -wasi-system-api tmp.mo"
+  runCommand "cd .. && $(mops toolchain bin wasmtime) tmp.wasm"
 
 
 conflicts :: Path -> Path -> Bool
